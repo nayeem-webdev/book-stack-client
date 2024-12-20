@@ -3,6 +3,7 @@ import { FaBars, FaGoogle, FaUser } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import { GoogleAuthProvider } from "firebase/auth";
+import axios from "axios";
 
 const links = [
   {
@@ -28,7 +29,7 @@ const links = [
 ];
 
 const Navbar = () => {
-  // Mobile Menu Open/ Close
+  //!! Mobile Menu Open/ Close
   const [mobileMenu, setMobileMenu] = useState(false);
   const { loginWithPopUp, user, setUser, loading, logout, setLoading } =
     useContext(AuthContext);
@@ -37,7 +38,10 @@ const Navbar = () => {
     loginWithPopUp(googleProvider)
       .then((res) => {
         setUser(res.user);
-        console.log(res.user);
+        const data = { email: res.user.email, uid: res.user.uid };
+        axios
+          .post("http://localhost:5000/jwt", data)
+          .then((d) => console.log(d.data));
         setLoading(false);
       })
       .catch((err) => console.log(err.message));
