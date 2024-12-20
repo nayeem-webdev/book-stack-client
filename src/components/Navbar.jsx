@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { FaBars, FaUserCircle } from "react-icons/fa";
+import { useContext, useState } from "react";
+import { FaBars, FaGoogle, FaUser } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
+import AuthContext from "../context/AuthContext";
+import { GoogleAuthProvider } from "firebase/auth";
 
 const links = [
   {
@@ -28,6 +30,25 @@ const links = [
 const Navbar = () => {
   // Mobile Menu Open/ Close
   const [mobileMenu, setMobileMenu] = useState(false);
+  const { loginWithPopUp, user, setUser, loading, logout, setLoading } =
+    useContext(AuthContext);
+  const googleProvider = new GoogleAuthProvider();
+  const handleGoogleLogin = () => {
+    loginWithPopUp(googleProvider)
+      .then((res) => {
+        setUser(res.user);
+        console.log(res.user);
+        setLoading(false);
+      })
+      .catch((err) => console.log(err.message));
+  };
+  const handleLogout = () => {
+    logout()
+      .then(() => {
+        setUser(null);
+      })
+      .catch((err) => console.log(err.message));
+  };
 
   return (
     <nav
@@ -92,46 +113,40 @@ const Navbar = () => {
       </div>
 
       {/* Right Section */}
-      {/* {user ? (
-      <div className="flex items-center gap-4">
-        <Link to={"/profile"}>
-          {loading ? (
-            <img
-              title={`${user.displayName} Visit Your Profile`}
-              src={user.photoURL}
-              className="h-10 w-10 rounded-full border-2 border-accent"
-              alt=""
-            />
-          ) : (
-            <img
-              title={`${user.displayName} Visit Your Profile`}
-              src={user.photoURL}
-              className="h-10 w-10 rounded-full border-2 border-accent"
-              alt=""
-            />
-          )}
-        </Link>
-        <button
-          onClick={handleLogout}
-          className="bg-accent text-white px-4 py-2 rounded-md hover:bg-accent/80 transition"
-        >
-          Logout
-        </button>
-      </div>
-    ) : ( */}
-      <div className="flex items-center gap-4">
-        <FaUserCircle
-          className="text-accent text-3xl "
-          title={`Nayeem Uddin | Visit Profile`}
-        />
-        <Link
-          to="/login"
-          className="bg-accent border border-gray-800 px-4 py-2 rounded-sm hover:bg-accent/80 transition group"
-        >
-          Profile Login
-        </Link>
-      </div>
-      {/* )} */}
+      {user ? (
+        <div className="flex items-center gap-4">
+          <Link to={"/profile"}>
+            {loading ? (
+              <FaUser
+                title={`${user?.displayName} Visit Your Profile`}
+                className="h-10 w-10 rounded-full border-2 border-accent p-[2px] text-accent"
+              />
+            ) : (
+              <img
+                title={`${user?.displayName} Visit Your Profile`}
+                src={user?.photoURL}
+                className="h-10 w-10 rounded-full border-2 border-accent"
+                alt=""
+              />
+            )}
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="bg-accent border border-gray-800 px-2 py-1 rounded-sm hover:bg-accent/80 transition group flex items-center gap-1"
+          >
+            Logout
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleGoogleLogin}
+            className="bg-accent border border-gray-800 px-2 py-1 rounded-sm hover:bg-accent/80 transition group flex items-center gap-1"
+          >
+            <FaGoogle className="text-black/70" /> Login
+          </button>
+        </div>
+      )}
     </nav>
   );
 };

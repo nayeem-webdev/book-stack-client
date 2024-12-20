@@ -10,8 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "library-name": "^1.1.0",
-    "prop-type": "^0.0.1",
+    "dotenv": "^16.4.7",
+    "firebase": "^11.1.0",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
